@@ -1,0 +1,48 @@
+--CREATE DATABASE shop_chd_crm;
+DROP TABLE IF EXISTS public.product CASCADE;
+CREATE TABLE public.product (
+    id integer NOT NULL,
+    title varchar(256) NOT NULL,
+	category_1 varchar(256),
+	category_2 varchar(256),
+	category_3 varchar(256),
+    brand varchar(256),
+    CONSTRAINT product_pk PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.shop CASCADE;
+CREATE TABLE public.shop (
+	id varchar(8) NOT NULL,
+	address varchar(256),
+	CONSTRAINT shop_pk PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.purchase CASCADE;
+CREATE TABLE public.purchase (
+    id varchar(64) NOT NULL,
+    user_id bigint,
+    transaction_type varchar(32),
+    purchase_date date NOT NULL,
+    processed_at timestamp,
+    gross_transaction_amount integer,
+    net_transaction_amount integer NOT NULL,
+    connected_transaction_id varchar(64),
+    discount_amount integer,
+    shop_id varchar(8) NOT NULL,
+    CONSTRAINT purchase_pk PRIMARY KEY (id),
+    CONSTRAINT purchase_shop_id_fk FOREIGN KEY (shop_id) REFERENCES shop(id) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS public.purchase_items CASCADE;
+CREATE TABLE public.purchase_items (
+	id varchar(64) NOT NULL,
+	purchase_id varchar(64) NOT NULL,
+	product_id integer NOT NULL,
+	amount integer NOT NULL,
+	price integer NOT NULL,
+	dicsount integer,
+	marketing_rule varchar(32),
+	CONSTRAINT purchase_items_pk PRIMARY KEY (id),
+	CONSTRAINT purchase_items_purchase_id FOREIGN KEY (purchase_id) REFERENCES purchase(id) ON DELETE CASCADE,
+	CONSTRAINT purchase_items_product_id FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
